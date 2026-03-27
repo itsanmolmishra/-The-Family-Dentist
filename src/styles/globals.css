@@ -290,3 +290,52 @@ html {
 .gradient-soft {
   background: linear-gradient(180deg, #E7F6FD 0%, #ffffff 100%);
 }
+
+/* Seamless horizontal marquee — duplicate track, translate -50% */
+@keyframes marquee-testimonial-screenshots {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-testimonial-screenshots {
+  animation: marquee-testimonial-screenshots 55s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-testimonial-screenshots {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100% !important;
+    max-width: 100%;
+  }
+}
+
+@keyframes marquee-google-reviews {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-google-reviews {
+  animation: marquee-google-reviews 70s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-google-reviews {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100% !important;
+    max-width: 100%;
+  }
+}

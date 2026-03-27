@@ -12,15 +12,18 @@ import {
   CheckCircle2,
   Calendar,
   Star,
+  ChevronRight,
+  UserCircle,
 } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { doctors as doctorsData } from "../data/doctorsData";
+import { doctors as doctorsData, resolveDoctorPageId } from "../data/doctorsData";
+import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
 import { fetchDoctors, fetchSettings } from "../api";
 
 interface AboutPageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, options?: NavigateOptions) => void;
 }
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
@@ -123,6 +126,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
 
   const teamMembers = dynamicDoctors.length > 0
     ? dynamicDoctors.filter(d => d.active !== false).map(d => ({
+        id: resolveDoctorPageId({ id: d.id, name: d.name, title: d.title }) ?? String(d.id ?? d._id ?? ""),
         name: d.title || d.name,
         specialty: d.specialty,
         qualification: d.qualificationLine2 ? `${d.qualification} • ${d.qualificationLine2}` : d.qualification,
@@ -132,6 +136,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         image: d.image || "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
       }))
     : doctorsData.map((d) => ({
+        id: d.id,
         name: d.title,
         specialty: d.specialty,
         qualification: d.qualificationLine2 ? `${d.qualification} • ${d.qualificationLine2}` : d.qualification,
@@ -264,46 +269,98 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         </div>
       </section>
 
-      {/* Meet Our Team */}
-      <section className="py-24 bg-gradient-to-br from-accent via-background to-accent">
+      {/* Founders */}
+      <section className="py-20 bg-white border-y border-primary/10">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16 max-w-4xl">
+          <div className="text-center mb-10">
+            <span className="text-sm font-medium uppercase tracking-wider text-primary">Founders &amp; Lead Dental Experts</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mt-3 mb-6">Meet Our Doctors</h2>
+          </div>
+          <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+            <p>
+              <strong className="text-foreground">Dr. Balram Garg and Dr. Radhika Garg</strong>, a dedicated husband and wife duo, are the proud owners and founders of the clinic. Together, they combine experience, compassion, and commitment to provide exceptional dental care.
+            </p>
+            <p>
+              Together, they share one vision—to deliver ethical, comfortable, and patient-centered dental care in a warm and welcoming environment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Our Team — aligned with Home testimonials card styling */}
+      <section className="py-24 md:py-32 bg-gradient-to-br from-accent via-background to-accent">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-primary/10 px-6 py-3 rounded-full mb-6">
               <Users className="w-5 h-5 text-primary" />
               <span className="text-sm text-primary font-medium uppercase tracking-wider">Our Team</span>
             </div>
-            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">Meet Our Dentists</h2>
+            <h2 className="text-5xl md:text-6xl mb-6 text-foreground">
+              Meet Our Dentists
+            </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our experienced team of dental professionals is dedicated to your oral health and wellbeing
+              Our experienced team of dental professionals is dedicated to your oral health and wellbeing.{" "}
+              <span className="text-foreground/90 font-medium">Card par click karein — doctor ki poori profile page khulegi.</span>
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
             {teamMembers.map((doctor, index) => (
               <Card
-                key={index}
-                className="group overflow-hidden hover:shadow-premium-lg transition-all duration-500 border border-primary/10 rounded-3xl bg-white"
+                key={doctor.id || index}
+                role={doctor.id ? "button" : undefined}
+                tabIndex={doctor.id ? 0 : undefined}
+                onClick={() => doctor.id && onNavigate("doctor", { doctorId: doctor.id })}
+                onKeyDown={(e) => {
+                  if (doctor.id && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    onNavigate("doctor", { doctorId: doctor.id });
+                  }
+                }}
+                aria-label={doctor.id ? `Open ${doctor.name} full profile page` : undefined}
+                className={`group h-full flex flex-col gap-0 overflow-hidden rounded-3xl border border-primary/10 bg-white p-0 hover:shadow-premium transition-all duration-300 ${
+                  doctor.id ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:border-primary/25" : ""
+                }`}
               >
-                <div className="aspect-[3/4] overflow-hidden relative">
+                <div className="aspect-[3/4] w-full shrink-0 overflow-hidden relative">
                   <img
                     src={doctor.image}
-                    alt={doctor.name}
+                    alt=""
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                </div>
-                <div className="p-8 bg-gradient-to-br from-white to-accent">
-                  <h3 className="text-2xl mb-2 text-foreground font-semibold">{doctor.name}</h3>
-                  <p className="text-primary mb-1 font-medium text-lg">{doctor.specialty}</p>
-                  {doctor.spl && (
-                    <p className="text-sm text-muted-foreground mb-2">Spl: {doctor.spl}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {doctor.id && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-16 pb-3 px-4 pointer-events-none flex items-end justify-between gap-2">
+                      <span className="text-white text-xs sm:text-sm font-semibold drop-shadow-md">
+                        Opens full profile
+                      </span>
+                      <ChevronRight className="w-5 h-5 text-white shrink-0 drop-shadow-md opacity-95" aria-hidden />
+                    </div>
                   )}
-                  <p className="text-sm text-muted-foreground mb-3">{doctor.qualification}</p>
-                  <div className="flex items-center text-muted-foreground mb-4">
-                    <Award className="w-5 h-5 mr-2 text-secondary" />
-                    <span>{doctor.experience}</span>
+                </div>
+                <div className="flex flex-1 flex-col justify-between min-h-0 p-8 bg-white">
+                  <div>
+                    <h3 className="text-2xl mb-2 text-foreground font-semibold">{doctor.name}</h3>
+                    <p className="text-primary mb-1 font-medium text-lg">{doctor.specialty}</p>
+                    {doctor.spl && (
+                      <p className="text-sm text-muted-foreground mb-2">Spl: {doctor.spl}</p>
+                    )}
+                    <p className="text-sm text-muted-foreground mb-3">{doctor.qualification}</p>
+                    <div className="flex items-center text-muted-foreground mb-4">
+                      <Award className="w-5 h-5 mr-2 text-secondary" />
+                      <span>{doctor.experience}</span>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">{doctor.description}</p>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">{doctor.description}</p>
+                  {doctor.id && (
+                    <div className="pt-6 mt-6 border-t border-border flex items-center justify-between gap-2 text-primary">
+                      <span className="flex items-center gap-2 text-sm font-semibold">
+                        <UserCircle className="w-4 h-4 shrink-0" aria-hidden />
+                        View full profile
+                      </span>
+                      <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden />
+                    </div>
+                  )}
                 </div>
               </Card>
             ))}

@@ -25,8 +25,21 @@ import { useState, useEffect } from "react";
 import { fetchServices } from "../api";
 
 interface ServicesPageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, options?: { gallerySection?: string }) => void;
 }
+
+/** Matches `treatmentSections` ids in GalleryPage — opens that treatment's photos */
+const GALLERY_SECTION_BY_TITLE: Record<string, string> = {
+  "Dental Implants": "dental-implants",
+  "Root Canal Treatment": "root-canal-treatment",
+  "Cosmetic Dentistry": "cosmetic-dentistry",
+  "Kids Dentistry": "kids-dentistry",
+  "Wisdom Tooth Removal": "wisdom-tooth-removal",
+  "Digital Dentistry": "digital-dentistry",
+  "Braces & Clear Aligners / Invisalign": "braces-and-aligners",
+  "Facial Trauma & Maxillofacial Surgeries": "facial-trauma-and-injuries",
+  "Oro-Facial Pain": "facial-trauma-and-injuries",
+};
 
 export function ServicesPage({ onNavigate }: ServicesPageProps) {
   const [dynamicServices, setDynamicServices] = useState<any[]>([]);
@@ -344,8 +357,12 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
         expertName: "",
         expertDesc: "",
         color: i % 2 === 0 ? "from-[#0E6BA8] to-[#0A4F7A]" : "from-[#3DB7E4] to-[#0E6BA8]",
+        gallerySectionId: GALLERY_SECTION_BY_TITLE[s.title] || undefined,
       }))
-    : services;
+    : services.map((s) => ({
+        ...s,
+        gallerySectionId: GALLERY_SECTION_BY_TITLE[s.title] || undefined,
+      }));
 
   return (
     <div className="min-h-screen pt-20">
@@ -526,19 +543,33 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
                     </div>
                   )}
 
-                  {/* Book Consultation CTA */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-accent to-white p-6 rounded-2xl border border-primary/10">
-                    <p className="text-muted-foreground mb-4 sm:mb-0 leading-relaxed">
+                  {/* Book Consultation + Treatment Gallery CTA */}
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-gradient-to-r from-accent to-white p-6 rounded-2xl border border-primary/10">
+                    <p className="text-muted-foreground leading-relaxed text-center lg:text-left">
                       Ready to get started? Book your consultation today.
                     </p>
-                    <Button
-                      variant="outline"
-                      className="border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full px-8"
-                      onClick={() => onNavigate("appointment")}
-                    >
-                      Schedule Consultation
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto justify-center lg:justify-end">
+                      <Button
+                        variant="outline"
+                        className="border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white rounded-full px-8"
+                        onClick={() => onNavigate("appointment")}
+                      >
+                        Schedule Consultation
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                      {service.gallerySectionId && (
+                        <Button
+                          variant="outline"
+                          className="border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white rounded-full px-8"
+                          onClick={() =>
+                            onNavigate("gallery", { gallerySection: service.gallerySectionId })
+                          }
+                        >
+                          View Treatment Gallery
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>

@@ -21,18 +21,22 @@ import {
   Stethoscope,
   Camera,
   Microscope,
+  ChevronRight,
+  UserCircle,
 } from "lucide-react";
 import { fetchSettings, fetchServices, fetchDoctors, fetchTestimonials, fetchGallery } from "../api";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { beforeAfterCategories } from "../data/beforeAfterData";
-import { getDoctorsForHome } from "../data/doctorsData";
+import { getDoctorsForHome, resolveDoctorPageId } from "../data/doctorsData";
+import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
+import { GoogleReviewMarquee } from "../components/GoogleReviewMarquee";
 import fullMouthCaseVideo from "../assets/full mouth case/WhatsApp Video 2026-02-04 at 11.48.26 AM.mp4";
 
 interface HomePageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, options?: NavigateOptions) => void;
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
@@ -127,43 +131,32 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const testimonials = [
     {
       name: "Jennifer Thompson",
+      service: "Dental Implants",
       rating: 5,
       text: "Outstanding service! Dr. Balram Garg and his team made my dental implant procedure painless and stress-free. Highly recommend!",
       date: "2 weeks ago",
     },
     {
       name: "Robert Martinez",
+      service: "Kids Dentistry",
       rating: 5,
       text: "My kids actually look forward to their dental appointments here! Dr. Radhika and the team are amazing with children.",
       date: "1 month ago",
     },
     {
       name: "Amanda Lee",
+      service: "Family Dentistry",
       rating: 5,
       text: "Best dental clinic in the area. Professional, caring staff and state-of-the-art equipment. My whole family comes here!",
       date: "3 weeks ago",
     },
     {
       name: "Michael Johnson",
+      service: "Root Canal",
       rating: 5,
       text: "I was nervous about my root canal, but Dr. Radhika made it painless in a single sitting. Results are incredible. Worth it!",
       date: "2 months ago",
     },
-  ];
-
-  const testimonialScreenshots = [
-    { src: "/testimonials/review-01.png", alt: "Patient Google review screenshot 1" },
-    { src: "/testimonials/review-02.png", alt: "Patient Google review screenshot 2" },
-    { src: "/testimonials/review-03.png", alt: "Patient Google review screenshot 3" },
-    { src: "/testimonials/review-04.png", alt: "Patient Google review screenshot 4" },
-    { src: "/testimonials/review-05.png", alt: "Patient Google review screenshot 5" },
-    { src: "/testimonials/review-06.png", alt: "Patient Google review screenshot 6" },
-    { src: "/testimonials/review-07.png", alt: "Patient Google review screenshot 7" },
-    { src: "/testimonials/review-08.png", alt: "Patient Google review screenshot 8" },
-    { src: "/testimonials/review-09.png", alt: "Patient Google review screenshot 9" },
-    { src: "/testimonials/review-10.png", alt: "Patient Google review screenshot 10" },
-    { src: "/testimonials/review-11.png", alt: "Patient Google review screenshot 11" },
-    { src: "/testimonials/review-12.png", alt: "Patient Google review screenshot 12" },
   ];
 
   const clinicImages = [
@@ -188,6 +181,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
   const displayDoctors = dynamicDoctors.length > 0
     ? dynamicDoctors.filter(d => d.active !== false).map(d => ({
+        id: resolveDoctorPageId({ id: d.id, name: d.name, title: d.title }) ?? String(d.id ?? d._id ?? ""),
         name: d.title || d.name,
         specialty: d.specialty,
         experience: d.experience,
@@ -196,12 +190,25 @@ export function HomePage({ onNavigate }: HomePageProps) {
     : getDoctorsForHome();
 
   const displayTestimonials = dynamicTestimonials.length > 0
-    ? dynamicTestimonials.filter(t => t.active !== false).map(t => ({
-        name: t.name,
-        rating: t.rating || 5,
-        text: t.text,
-        date: new Date(t.date).toLocaleDateString(),
-      }))
+    ? dynamicTestimonials.filter(t => t.active !== false).map((t: Record<string, unknown>) => {
+        const rawDate = t.date;
+        let dateLabel = "";
+        if (rawDate != null && rawDate !== "") {
+          const s = String(rawDate);
+          if (/ago|mins?|hours?|days?|weeks?|months?|years?/i.test(s)) dateLabel = s;
+          else {
+            const parsed = new Date(s);
+            dateLabel = Number.isNaN(parsed.getTime()) ? s : parsed.toLocaleDateString();
+          }
+        }
+        return {
+          name: String(t.name ?? ""),
+          service: typeof t.service === "string" ? t.service : "Dental Care",
+          rating: typeof t.rating === "number" ? t.rating : 5,
+          text: String(t.text ?? ""),
+          date: dateLabel,
+        };
+      })
     : testimonials;
 
   const displayGallery = dynamicGallery.length > 0
@@ -572,41 +579,75 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* Our Doctors */}
-      <section className="py-24 md:py-32 bg-white">
+      {/* Our Doctors — same section + card language as "What Our Patients Say" (testimonials) */}
+      <section className="py-24 md:py-32 bg-gradient-to-br from-accent via-background to-accent">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-primary/10 px-6 py-3 rounded-full mb-6">
               <Users className="w-5 h-5 text-primary" />
               <span className="text-sm text-primary font-medium uppercase tracking-wider">Our Team</span>
             </div>
-            <h2 className="text-5xl md:text-6xl mb-6 text-foreground">Meet Our Dentists</h2>
+            <h2 className="text-5xl md:text-6xl mb-6 text-foreground">
+              Meet Our Dentists
+            </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our experienced team of dental professionals is dedicated to your oral health
+              Our experienced team of dental professionals is dedicated to your oral health.{" "}
+              <span className="text-foreground/90 font-medium">Kisi bhi doctor par click karein — unki full profile page khulegi.</span>
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
             {displayDoctors.map((doctor, index) => (
               <Card
-                key={index}
-                className="group overflow-hidden hover:shadow-premium-lg transition-all duration-500 border border-primary/10 rounded-3xl bg-white"
+                key={doctor.id || index}
+                role={doctor.id ? "button" : undefined}
+                tabIndex={doctor.id ? 0 : undefined}
+                onClick={() => doctor.id && onNavigate("doctor", { doctorId: doctor.id })}
+                onKeyDown={(e) => {
+                  if (doctor.id && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    onNavigate("doctor", { doctorId: doctor.id });
+                  }
+                }}
+                aria-label={doctor.id ? `Open ${doctor.name} full profile page` : undefined}
+                className={`group h-full flex flex-col gap-0 overflow-hidden rounded-3xl border border-primary/10 bg-white p-0 hover:shadow-premium transition-all duration-300 ${
+                  doctor.id ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:border-primary/25" : ""
+                }`}
               >
-                <div className="aspect-[3/4] overflow-hidden relative">
+                <div className="aspect-[3/4] w-full shrink-0 overflow-hidden relative">
                   <img
                     src={doctor.image}
-                    alt={doctor.name}
+                    alt=""
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {doctor.id && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-16 pb-3 px-4 pointer-events-none flex items-end justify-between gap-2">
+                      <span className="text-white text-xs sm:text-sm font-semibold drop-shadow-md">
+                        Opens full profile
+                      </span>
+                      <ChevronRight className="w-5 h-5 text-white shrink-0 drop-shadow-md opacity-95" aria-hidden />
+                    </div>
+                  )}
                 </div>
-                <div className="p-8 bg-gradient-to-br from-white to-accent">
-                  <h3 className="text-2xl mb-2 text-foreground font-semibold">{doctor.name}</h3>
-                  <p className="text-primary mb-2 font-medium text-lg">{doctor.specialty}</p>
-                  <div className="flex items-center text-muted-foreground">
-                    <Award className="w-5 h-5 mr-2 text-secondary" />
-                    <span>{doctor.experience}</span>
+                <div className="flex flex-1 flex-col justify-between min-h-0 p-8 bg-white">
+                  <div>
+                    <h3 className="text-2xl mb-2 text-foreground font-semibold">{doctor.name}</h3>
+                    <p className="text-primary mb-2 font-medium text-lg">{doctor.specialty}</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <Award className="w-5 h-5 mr-2 text-secondary" />
+                      <span>{doctor.experience}</span>
+                    </div>
                   </div>
+                  {doctor.id && (
+                    <div className="pt-6 mt-6 border-t border-border flex items-center justify-between gap-2 text-primary">
+                      <span className="flex items-center gap-2 text-sm font-semibold">
+                        <UserCircle className="w-4 h-4 shrink-0" aria-hidden />
+                        View full profile
+                      </span>
+                      <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden />
+                    </div>
+                  )}
                 </div>
               </Card>
             ))}
@@ -641,47 +682,60 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayTestimonials.map((testimonial, index) => (
-              <Card 
-                key={index} 
-                className="p-8 border border-primary/10 bg-white rounded-3xl hover:shadow-premium transition-all duration-300"
+              <Card
+                key={index}
+                className="p-8 border border-primary/10 bg-gradient-to-br from-white to-accent rounded-3xl hover:shadow-premium-lg transition-all duration-300 flex flex-col h-full"
               >
-                <div className="flex items-center space-x-1 mb-6">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-secondary text-secondary" />
-                  ))}
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-14 h-14 shrink-0 rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold text-lg">
+                    {testimonial.name
+                      .split(" ")
+                      .map((part) => part[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-foreground text-lg leading-tight">{testimonial.name}</div>
+                    <div className="flex items-center space-x-1 mt-1">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <p className="text-foreground mb-6 leading-relaxed italic">
-                  "{testimonial.text}"
-                </p>
-                <div className="pt-6 border-t border-border">
-                  <div className="font-semibold text-foreground text-lg">{testimonial.name}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.date}</div>
+
+                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">"{testimonial.text}"</p>
+
+                <div className="flex items-center justify-between pt-4 border-t border-border gap-3 mt-auto">
+                  <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium max-w-[55%] truncate">
+                    {testimonial.service}
+                  </span>
+                  <div className="text-sm text-muted-foreground flex items-center gap-1 shrink-0">
+                    <Calendar className="w-3 h-3 shrink-0" />
+                    <span>{testimonial.date}</span>
+                  </div>
                 </div>
               </Card>
             ))}
           </div>
 
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl md:text-3xl text-foreground font-semibold">Real Google Review Screenshots</h3>
-              <p className="text-muted-foreground mt-2">Unedited feedback directly shared by our patients</p>
+          <div className="mt-20">
+            <div className="text-center mb-10 max-w-3xl mx-auto px-4">
+              <h2 className="text-4xl md:text-5xl mb-4 text-foreground font-semibold">
+                Real Google Reviews
+              </h2>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Card-style reviews in a row — scrolls automatically (hover to pause).
+              </p>
             </div>
-            <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-              {testimonialScreenshots.map((reviewImage, index) => (
-                <Card
-                  key={reviewImage.src}
-                  className="overflow-hidden rounded-2xl border border-primary/10 shadow-sm hover:shadow-premium transition-all duration-300 break-inside-avoid"
-                >
-                  <img
-                    src={reviewImage.src}
-                    alt={reviewImage.alt}
-                    loading={index < 3 ? "eager" : "lazy"}
-                    className="w-full h-auto object-cover"
-                  />
-                </Card>
-              ))}
+            <div
+              className="w-full overflow-x-hidden"
+              aria-label="Scrolling Google reviews"
+            >
+              <GoogleReviewMarquee />
             </div>
           </div>
           

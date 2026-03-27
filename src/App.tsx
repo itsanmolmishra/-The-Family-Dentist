@@ -9,11 +9,27 @@ import { AppointmentPage } from "./pages/AppointmentPage";
 import { TestimonialsPage } from "./pages/TestimonialsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { GalleryPage } from "./pages/GalleryPage";
+import { DoctorDetailPage } from "./pages/DoctorDetailPage";
+import type { NavigateOptions } from "./types/navigation";
+
+export type { NavigateOptions };
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
+  const [galleryHighlightSectionId, setGalleryHighlightSectionId] = useState<string | null>(null);
+  const [doctorId, setDoctorId] = useState<string | null>(null);
 
-  const handleNavigate = (page: string) => {
+  const handleNavigate = (page: string, options?: NavigateOptions) => {
+    if (page === "gallery") {
+      setGalleryHighlightSectionId(options?.gallerySection ?? null);
+    } else {
+      setGalleryHighlightSectionId(null);
+    }
+    if (page === "doctor") {
+      setDoctorId(options?.doctorId ?? null);
+    } else {
+      setDoctorId(null);
+    }
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -31,9 +47,16 @@ export default function App() {
       case "testimonials":
         return <TestimonialsPage onNavigate={handleNavigate} />;
       case "gallery":
-        return <GalleryPage onNavigate={handleNavigate} />;
+        return (
+          <GalleryPage
+            onNavigate={handleNavigate}
+            highlightSectionId={galleryHighlightSectionId}
+          />
+        );
       case "contact":
         return <ContactPage onNavigate={handleNavigate} />;
+      case "doctor":
+        return <DoctorDetailPage doctorId={doctorId} onNavigate={handleNavigate} />;
       default:
         return <HomePage onNavigate={handleNavigate} />;
     }
