@@ -92,7 +92,7 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
       </section>
 
       {/* Patient Reviews */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[#eef7fd]">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">
@@ -100,7 +100,7 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
             {googleReviewTestimonials.map((testimonial, index) => (
               <TestimonialReviewCard
                 key={`${testimonial.name}-${index}`}

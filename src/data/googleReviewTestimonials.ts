@@ -70,25 +70,4 @@ export const googleReviewTestimonials: GoogleReviewTestimonial[] = [
     date: "4 years ago",
     text: "Brilliant and best dentist in Gaur City with supportive staff and a very professional clinic environment.",
   },
-  {
-    name: "Shivank Bhasin",
-    service: "Dental Treatment",
-    rating: 5,
-    date: "a year ago",
-    text: "Immense knowledge and expertise. Highly recommend Dr. Balram and Dr. Radhika for dental treatment in Noida Extension.",
-  },
-  {
-    name: "Sudhir Mishra",
-    service: "RCT & Capping",
-    rating: 5,
-    date: "a year ago",
-    text: "Very ethical and skillful doctors. Multiple family members got treatment done here with painless procedures and great results.",
-  },
-  {
-    name: "Preeti",
-    service: "Cleaning & Wisdom Teeth",
-    rating: 5,
-    date: "a year ago",
-    text: "Recovered confidence and smile after proper treatment. Cleaning issues resolved and wisdom teeth removed painlessly. Truly thankful to both doctors.",
-  },
 ];
