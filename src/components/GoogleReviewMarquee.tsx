@@ -11,7 +11,7 @@ export function GoogleReviewMarquee() {
         {track.map((t, index) => (
           <div
             key={`${t.name}-${index}`}
-            className="flex h-[min(72vh,460px)] min-h-[360px] w-[min(90vw,310px)] shrink-0 flex-col sm:h-[min(74vh,480px)] sm:min-h-[400px] sm:w-[320px] md:w-[340px]"
+            className="w-[min(90vw,340px)] shrink-0 sm:w-[340px] md:w-[360px]"
           >
             <TestimonialReviewCard
               name={t.name}
@@ -21,7 +21,7 @@ export function GoogleReviewMarquee() {
               date={t.date}
               hideMeta={false}
               visualVariant="google"
-              className="min-h-0 w-full flex-1"
+              className="w-full"
             />
           </div>
         ))}

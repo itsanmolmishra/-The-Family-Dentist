@@ -785,10 +785,10 @@ export function GalleryPage({ onNavigate, highlightSectionId }: GalleryPageProps
         </div>
       </section>
 
-      {/* Testimonials and Ambience Copy */}
+      {/* Testimonials and Clinic Ambience */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8 mb-10">
             <Card className="p-8 rounded-3xl border border-primary/10 bg-gradient-to-br from-white to-accent">
               <div className="flex items-center gap-3 mb-4 text-primary">
                 <Quote className="w-5 h-5" />
@@ -810,10 +810,10 @@ export function GalleryPage({ onNavigate, highlightSectionId }: GalleryPageProps
                 <h3 className="text-2xl font-semibold text-foreground">Clinic Ambience</h3>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-5">
-                Our clinic is modern, clean, and patient-friendly. From reception to treatment rooms, every detail is designed to make you feel safe, relaxed, and stress-free.
+                Our clinic is designed to provide a modern, relaxing, and patient-friendly environment. From the moment you walk in, you will notice our clean, well-organized, and welcoming space and staff.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                We maintain strict hygiene standards while creating a welcoming atmosphere for children and adults alike.
+                For real clinic ambience photographs, please visit our About page where we showcase our actual in-clinic environment.
               </p>
               <Button variant="outline" className="mt-6 border-primary text-primary hover:bg-primary hover:text-white" onClick={() => onNavigate("contact")}>
                 Visit Our Clinic

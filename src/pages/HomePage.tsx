@@ -27,17 +27,23 @@ import {
 import { fetchSettings, fetchServices, fetchDoctors, fetchTestimonials, fetchGallery } from "../api";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
+import { TestimonialReviewCard } from "../components/TestimonialReviewCard";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { beforeAfterCategories } from "../data/beforeAfterData";
+import { googleReviewTestimonials } from "../data/googleReviewTestimonials";
 import { getDoctorsForHome, resolveDoctorPageId } from "../data/doctorsData";
 import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
-import { GoogleReviewMarquee } from "../components/GoogleReviewMarquee";
 import fullMouthCaseVideo from "../assets/full mouth case/WhatsApp Video 2026-02-04 at 11.48.26 AM.mp4";
 
 interface HomePageProps {
   onNavigate: (page: string, options?: NavigateOptions) => void;
 }
+
+const homeClinicGalleryImageModules = import.meta.glob<string>(
+  "../assets/clinic-gallery/*.{jpeg,jpg,png,webp}",
+  { query: "?url", import: "default", eager: true }
+);
 
 export function HomePage({ onNavigate }: HomePageProps) {
   const placeholderImageMale = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080";
@@ -159,6 +165,37 @@ export function HomePage({ onNavigate }: HomePageProps) {
     },
   ];
 
+  const beforeAfterCases = [
+    {
+      title: "Dental Implants Transformation",
+      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      description: "Complete smile restoration with dental implants",
+      duration: "6 months",
+    },
+    {
+      title: "Teeth Whitening Results",
+      before: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      description: "Professional whitening - 8 shades lighter",
+      duration: "1 session",
+    },
+    {
+      title: "Invisalign Treatment",
+      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      after: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      description: "Perfectly aligned smile with clear aligners",
+      duration: "18 months",
+    },
+    {
+      title: "Cosmetic Smile Makeover",
+      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      description: "Complete smile transformation with veneers",
+      duration: "3 months",
+    },
+  ];
+
   const clinicImages = [
     "https://images.unsplash.com/photo-1762625570087-6d98fca29531?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZW50YWwlMjBjbGluaWMlMjBtb2Rlcm4lMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjkzNTk4MDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "https://images.unsplash.com/photo-1758205307912-5896ff0c65ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZW50aXN0JTIwZXhhbWluaW5nJTIwcGF0aWVudHxlbnwxfHx8fDE3NjkzOTE3MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -169,6 +206,22 @@ export function HomePage({ onNavigate }: HomePageProps) {
     "https://images.unsplash.com/photo-1560181275-a65519fd0ec1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMHRlZXRoJTIwc21pbGV8ZW58MXx8fHwxNzY5MzQ2NzA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "https://images.unsplash.com/photo-1619236233405-bb5d430f0620?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwZGVudGlzdCUyMGNoaWxkfGVufDF8fHx8MTc2OTQ0NjE3MXww&ixlib=rb-4.1.0&q=80&w=1080",
   ];
+
+  const seenClinicImageNames = new Set<string>();
+  const clinicGalleryImages = Object.entries(homeClinicGalleryImageModules)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .reduce<string[]>((acc, [path, src]) => {
+      const fileName = path.split("/").pop() ?? path;
+      const normalizedName = fileName
+        .toLowerCase()
+        .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
+        .replace(/\s\(\d+\)(?=\.[a-z]+$)/, "");
+
+      if (!src || seenClinicImageNames.has(normalizedName)) return acc;
+      seenClinicImageNames.add(normalizedName);
+      acc.push(src);
+      return acc;
+    }, []);
 
   const displayServices = dynamicServices.length > 0
     ? dynamicServices.filter(s => s.active !== false).map(s => ({
@@ -666,88 +719,90 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* Patient Testimonials */}
-      <section className="py-24 md:py-32 bg-gradient-to-br from-accent via-background to-accent">
+      {/* Before & After Gallery */}
+      <section className="py-24 bg-gradient-to-br from-[#E7F6FD] via-[#F0F9FF] to-[#E7F6FD]">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-primary/10 px-6 py-3 rounded-full mb-6">
-              <Star className="w-5 h-5 text-primary" />
-              <span className="text-sm text-primary font-medium uppercase tracking-wider">Testimonials</span>
+            <div className="inline-flex items-center space-x-2 bg-white px-6 py-3 rounded-full mb-6 shadow-premium border border-primary/10">
+              <Sparkles className="w-5 h-5 text-secondary" />
+              <span className="text-sm text-primary font-medium uppercase tracking-wider">Transformations</span>
             </div>
-            <h2 className="text-5xl md:text-6xl mb-6 text-foreground">
-              What Our Patients Say
+            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">
+              Before & After Results
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Don't just take our word for it. Here's what our happy patients have to say
+              Real results from our patients. See the amazing transformations we've achieved
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayTestimonials.map((testimonial, index) => (
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {beforeAfterCases.map((case_, index) => (
               <Card
                 key={index}
-                className="p-8 border border-primary/10 bg-gradient-to-br from-white to-accent rounded-3xl hover:shadow-premium-lg transition-all duration-300 flex flex-col h-full"
+                className="overflow-hidden border border-primary/10 shadow-premium rounded-3xl bg-white hover:shadow-premium-lg transition-all duration-300"
               >
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-14 h-14 shrink-0 rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold text-lg">
-                    {testimonial.name
-                      .split(" ")
-                      .map((part) => part[0])
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
+                <div className="grid grid-cols-2 gap-0">
+                  {/* Before */}
+                  <div className="relative group overflow-hidden aspect-square">
+                    <img
+                      src={case_.before}
+                      alt="Before treatment"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4 bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
+                      BEFORE
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-foreground text-lg leading-tight">{testimonial.name}</div>
-                    <div className="flex items-center space-x-1 mt-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
-                      ))}
+
+                  {/* After */}
+                  <div className="relative group overflow-hidden aspect-square">
+                    <img
+                      src={case_.after}
+                      alt="After treatment"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
+                      AFTER
                     </div>
                   </div>
                 </div>
 
-                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">"{testimonial.text}"</p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-border gap-3 mt-auto">
-                  <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium max-w-[55%] truncate">
-                    {testimonial.service}
-                  </span>
-                  <div className="text-sm text-muted-foreground flex items-center gap-1 shrink-0">
-                    <Calendar className="w-3 h-3 shrink-0" />
-                    <span>{testimonial.date}</span>
+                {/* Description */}
+                <div className="p-8 bg-gradient-to-br from-white to-accent">
+                  <h3 className="text-2xl font-semibold text-foreground mb-3">{case_.title}</h3>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{case_.description}</p>
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <span className="text-sm text-muted-foreground">Treatment Duration</span>
+                    <span className="text-sm font-semibold text-primary">{case_.duration}</span>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-20">
-            <div className="text-center mb-10 max-w-3xl mx-auto px-4">
-              <h2 className="text-4xl md:text-5xl mb-4 text-foreground font-semibold">
-                Real Google Reviews
-              </h2>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Card-style reviews in a row — scrolls automatically (hover to pause).
-              </p>
-            </div>
-            <div
-              className="w-full overflow-x-hidden"
-              aria-label="Scrolling Google reviews"
-            >
-              <GoogleReviewMarquee />
-            </div>
+      {/* Patient Testimonials */}
+      <section className="py-24 md:py-32" style={{ backgroundColor: "#dee8ef" }}>
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">
+              Real Google Reviews
+            </h2>
           </div>
-          
-          <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full px-10 py-6"
-              onClick={() => onNavigate("testimonials")}
-            >
-              Read More Reviews
-            </Button>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
+              {googleReviewTestimonials.map((testimonial, index) => (
+              <TestimonialReviewCard
+                key={`${testimonial.name}-${index}`}
+                name={testimonial.name}
+                text={testimonial.text}
+                rating={testimonial.rating}
+                service={testimonial.service}
+                date={testimonial.date}
+                visualVariant="google"
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -758,12 +813,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl mb-6 text-foreground">Our Clinic</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Take a virtual tour of our modern, welcoming dental facility
+              Take a look at our real clinic ambience and patient-friendly treatment setup
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {clinicImages.map((image, index) => (
+            {(clinicGalleryImages.length > 0 ? clinicGalleryImages : clinicImages).map((image, index) => (
               <div 
                 key={index} 
                 className="group rounded-3xl overflow-hidden shadow-premium hover:shadow-premium-lg transition-all duration-500"

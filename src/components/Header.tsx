@@ -86,7 +86,7 @@ export function Header({ currentPage, onNavigate }: HeaderProps) {
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
-                  className={`px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 ${
+                  className={`px-4 py-2.5 m-0 rounded-full text-base font-medium transition-all duration-300 ${
                     currentPage === item.id
                       ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg"
                       : "text-foreground hover:bg-primary/10 hover:text-primary"
@@ -104,7 +104,7 @@ export function Header({ currentPage, onNavigate }: HeaderProps) {
                 size="default"
                 onClick={() => onNavigate("contact")}
               >
-                <Phone className="w-4 h-4 mr-2" />
+                <Phone className="w-4 h-4 mr-1" />
                 Call Now
               </Button>
             </div>

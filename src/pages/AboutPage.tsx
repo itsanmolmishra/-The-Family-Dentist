@@ -18,6 +18,7 @@ import {
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { doctors as doctorsData, resolveDoctorPageId } from "../data/doctorsData";
+import { beforeAfterCategories } from "../data/beforeAfterData";
 import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
 import { fetchDoctors, fetchSettings } from "../api";
@@ -25,6 +26,16 @@ import { fetchDoctors, fetchSettings } from "../api";
 interface AboutPageProps {
   onNavigate: (page: string, options?: NavigateOptions) => void;
 }
+
+const clinicAmbienceImageModules = import.meta.glob<string>(
+  "../assets/clinic-gallery/*.{jpeg,jpg,png,webp}",
+  { query: "?url", import: "default", eager: true }
+);
+
+const clinicAmbienceVideoModules = import.meta.glob<string>(
+  "../assets/clinic-gallery/*.{mp4,webm,mov}",
+  { query: "?url", import: "default", eager: true }
+);
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
   const [dynamicDoctors, setDynamicDoctors] = useState<any[]>([]);
@@ -113,16 +124,37 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
     },
   ];
 
-  const clinicImages = [
-    "https://images.unsplash.com/photo-1762625570087-6d98fca29531?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1758205307912-5896ff0c65ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1766338390573-ec092d69cdcb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1742522450616-a2cf0cba1274?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1758205307854-5f0b57c27f17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1704455306925-1401c3012117?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1560181275-a65519fd0ec1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    "https://images.unsplash.com/photo-1619236233405-bb5d430f0620?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-  ];
+  const seenClinicImageNames = new Set<string>();
+  const clinicImages = Object.entries(clinicAmbienceImageModules)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .reduce<string[]>((acc, [path, src]) => {
+      const fileName = path.split("/").pop() ?? path;
+      const normalizedName = fileName
+        .toLowerCase()
+        .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
+        .replace(/\s\(\d+\)(?=\.[a-z]+$)/, "");
+
+      if (!src || seenClinicImageNames.has(normalizedName)) return acc;
+      seenClinicImageNames.add(normalizedName);
+      acc.push(src);
+      return acc;
+    }, []);
+
+  const seenClinicVideoNames = new Set<string>();
+  const clinicVideos = Object.entries(clinicAmbienceVideoModules)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .reduce<string[]>((acc, [path, src]) => {
+      const fileName = path.split("/").pop() ?? path;
+      const normalizedName = fileName
+        .toLowerCase()
+        .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
+        .replace(/\s\(\d+\)(?=\.[a-z]+$)/, "");
+
+      if (!src || seenClinicVideoNames.has(normalizedName)) return acc;
+      seenClinicVideoNames.add(normalizedName);
+      acc.push(src);
+      return acc;
+    }, []);
 
   const teamMembers = dynamicDoctors.length > 0
     ? dynamicDoctors.filter(d => d.active !== false).map(d => ({
@@ -185,13 +217,16 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 ) : (
                   <>
                     <p>
-                      {clinic.name} began with a simple vision: to create a dental practice where families feel truly cared for. Our senior practitioners, including Prof. Dr. Balram Garg (Oral & Maxillofacial Surgeon & Implantologist) and Dr. Radhika Garg (Conservative Dentist & Endodontist), lead the clinic with a commitment to combining clinical excellence with genuine compassion.
+                      THE FAMILY DENTIST began with a simple vision: to create a dental practice where families feel truly cared for. Our senior practitioners, including Prof. Dr. Balram Garg (Oral &amp; Maxillofacial Surgeon &amp; Implantologist) and Dr. Radhika Garg (Conservative Dentist &amp; Endodontist), lead the clinic with a commitment to combining clinical excellence with genuine compassion.
                     </p>
                     <p>
-                      Over the years, we have grown into a full-service dental clinic with our experienced team of specialists and a dedicated staff. Prof. Dr. Balram brings over 18 years of experience with associations at AIIMS, PGIMS, and Government Dental College, and an MS in Dentistry from the USA. Dr. Radhika has over 17 years in aesthetic and modern dentistry, with expertise in single-sitting RCT and smile design. Despite our growth, we have never lost sight of what matters most—building lasting relationships with our patients.
+                      Over the years, we have grown into a fully digital dental clinic, supported by an experienced team of specialists and dedicated staff. Prof. Dr. Balram brings over 18 years of experience, including roles at AIIMS, PGIMS, and Government Dental College, and an MS in Dentistry, along with a research fellowship in implantology from the University of Michigan, USA. Dr. Radhika has over 17 years of experience in aesthetic and modern dentistry, with expertise in single-sitting RCT and smile design.
                     </p>
                     <p>
-                      Today, we're proud to serve over 20,000 patients and counting. Our state-of-the-art facility combines the latest dental technology with a warm, family-friendly atmosphere. Whether you're bringing in your toddler for their first visit or seeking advanced cosmetic dentistry, we're here to provide exceptional care at every stage of life.
+                      Despite our growth, we have never lost sight of what matters most-building lasting relationships with our patients. Today, we're proudly one of the most equipped dental and maxillofacial centers in Noida and have served over 20,000 patients and counting. Our state-of-the-art facility combines the latest dental technology with a warm, family-friendly atmosphere. Whether you're bringing in your toddler for their first visit or seeking advanced cosmetic dentistry, we're here to provide exceptional care at every stage of life.
+                    </p>
+                    <p>
+                      Please read what our patients have to say about their experience with us. Their reviews, shared in their own words, reflect the care, comfort, and trust they felt during their treatment at our clinic.
                     </p>
                   </>
                 )}
@@ -211,6 +246,133 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Clinic Ambience */}
+      <section className="py-24 bg-gradient-to-br from-accent via-background to-accent">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <div className="max-w-5xl mx-auto text-center mb-14">
+            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">Clinic Ambience</h2>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              Our clinic is designed to provide a modern, relaxing, and patient-friendly environment. From the moment you walk in, you will notice our clean, well-organized, and welcoming space and staff. We focus on creating a calm atmosphere to help patients feel comfortable and stress-free during their dental visits.
+            </p>
+            <div className="mt-8 rounded-2xl border border-primary/15 bg-[#EAF5FC] px-6 py-5 md:px-8 md:py-6">
+              <p className="text-base md:text-lg text-foreground leading-relaxed font-medium">
+                HERE ARE A FEW PHOTOGRAPHS OF OUR CLINIC AMBIENCE TO HELP YOU FEEL COMFORTABLE AND CONFIDENT ABOUT YOUR VISIT.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {clinicImages.slice(0, 8).map((image, index) => (
+              <div
+                key={index}
+                className="rounded-3xl overflow-hidden shadow-premium hover:shadow-premium-lg transition-all duration-300"
+              >
+                <img
+                  src={image}
+                  alt={`Clinic ambience ${index + 1}`}
+                  className="w-full h-64 object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+            ))}
+          </div>
+
+          {clinicVideos.length > 0 && (
+            <div className="mt-14">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">Clinic Video Tour</h3>
+                <p className="text-muted-foreground text-lg">Watch our real treatment environment and patient-friendly setup</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+                {clinicVideos.slice(0, 2).map((videoSrc, index) => (
+                  <Card
+                    key={`${videoSrc}-${index}`}
+                    className="self-start overflow-hidden rounded-3xl border border-primary/10 shadow-premium hover:shadow-premium-lg transition-all duration-300 bg-white"
+                  >
+                    <video
+                      src={videoSrc}
+                      autoPlay
+                      muted
+                      loop
+                      controls
+                      preload="auto"
+                      playsInline
+                      className="w-full aspect-video object-cover bg-black"
+                      poster={clinicImages[index]}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                    <div className="px-5 py-4 border-t border-primary/10 bg-gradient-to-r from-[#f8fcff] to-white">
+                      <p className="text-sm font-medium text-primary">Clinic Ambience Video {index + 1}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Smile Transformations */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <div className="max-w-5xl mx-auto text-center mb-14">
+            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">Smile Transformations</h2>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              We perform every procedure with care, precision, and a patient-centric approach, ensuring the treatment plan aligns with each patient's needs and desired results.
+            </p>
+            <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-relaxed">
+              Please look at our own work attached below as we transformed a beautiful smile.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {beforeAfterCategories.slice(0, 4).map((category) => {
+              const beforeSrc = category.images[0];
+              const afterSrc = category.images[1] ?? category.images[0];
+              return (
+                <Card
+                  key={category.id}
+                  className="group overflow-hidden rounded-3xl border border-primary/10 shadow-premium bg-white hover:shadow-premium-lg transition-all duration-300"
+                >
+                  <div className="grid grid-cols-2 gap-0">
+                    <div className="relative aspect-square overflow-hidden">
+                      <img
+                        src={beforeSrc}
+                        alt={`${category.title} before treatment`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <span className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
+                        Before
+                      </span>
+                    </div>
+                    <div className="relative aspect-square overflow-hidden">
+                      <img
+                        src={afterSrc}
+                        alt={`${category.title} after treatment`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
+                        After
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-foreground mb-2">{category.title}</h3>
+                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                      {category.description ?? "Smile transformation completed with expert planning and precision."}
+                    </p>
+                    <div className="pt-4 border-t border-border flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Treatment Duration</span>
+                      <span className="text-sm font-semibold text-primary">{category.duration ?? "Varies"}</span>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>

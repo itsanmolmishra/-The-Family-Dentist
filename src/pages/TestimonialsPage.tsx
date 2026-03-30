@@ -73,6 +73,29 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
         </div>
       </section>
 
+      {/* Patient Testimonials Intro */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <div className="max-w-5xl mx-auto">
+            <Card className="rounded-3xl border border-primary/10 bg-gradient-to-br from-[#F8FCFF] to-white p-8 md:p-12 shadow-premium">
+              <h2 className="text-3xl md:text-4xl text-foreground font-semibold mb-6">
+                Patient Testimonials
+              </h2>
+
+              <p className="text-lg text-muted-foreground leading-relaxed mb-5">
+                Our patients are at the heart of everything we do. We are proud to receive positive feedback from people who trust us with their smiles. Many of our patients appreciate our gentle approach, clear communication, and the comfortable experience they receive during treatment. Their kind words and successful treatment outcomes motivate our team to continue delivering the highest standard of dental care.
+              </p>
+
+              <div className="mt-8 rounded-2xl border border-primary/15 bg-[#EAF5FC] p-6 md:p-8">
+                <p className="text-lg md:text-xl text-foreground leading-relaxed italic">
+                  Please read what our patients have to say about their experience with us. Their reviews, shared in their own words, reflect the care, comfort, and trust they felt during their treatment at our clinic.
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-16 gradient-rose-gold relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZjEwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
@@ -92,7 +115,7 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
       </section>
 
       {/* Patient Reviews */}
-      <section className="py-24 bg-[#eef7fd]">
+      <section className="py-24" style={{ backgroundColor: "#dee8ef" }}>
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">
