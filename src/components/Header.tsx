@@ -1,7 +1,7 @@
 import { Phone, Mail, Clock, Menu, X, Facebook, Instagram, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
-import logoImg from "../assets/logo.png";
+import logoImg from "../assets/logo-dentist.jpeg";
 import { fetchSettings } from "../api";
 import { clinic } from "../data/clinicConfig";
 

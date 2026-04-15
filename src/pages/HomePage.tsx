@@ -24,7 +24,7 @@ import {
   ChevronRight,
   UserCircle,
 } from "lucide-react";
-import { fetchSettings, fetchServices, fetchDoctors, fetchTestimonials, fetchGallery } from "../api";
+import { fetchSettings, fetchServices, fetchDoctors, fetchTestimonials } from "../api";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { TestimonialReviewCard } from "../components/TestimonialReviewCard";
@@ -51,14 +51,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const [dynamicServices, setDynamicServices] = useState<any[]>([]);
   const [dynamicDoctors, setDynamicDoctors] = useState<any[]>([]);
   const [dynamicTestimonials, setDynamicTestimonials] = useState<any[]>([]);
-  const [dynamicGallery, setDynamicGallery] = useState<any[]>([]);
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
     fetchServices().then(d => d.length && setDynamicServices(d)).catch(() => {});
     fetchDoctors().then(d => d.length && setDynamicDoctors(d)).catch(() => {});
     fetchTestimonials().then(d => d.length && setDynamicTestimonials(d)).catch(() => {});
-    fetchGallery().then(d => d.length && setDynamicGallery(d)).catch(() => {});
     fetchSettings().then(d => d && setSettings(d)).catch(() => {});
   }, []);
 
@@ -165,36 +163,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
     },
   ];
 
-  const beforeAfterCases = [
-    {
-      title: "Dental Implants Transformation",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Complete smile restoration with dental implants",
-      duration: "6 months",
-    },
-    {
-      title: "Teeth Whitening Results",
-      before: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Professional whitening - 8 shades lighter",
-      duration: "1 session",
-    },
-    {
-      title: "Invisalign Treatment",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Perfectly aligned smile with clear aligners",
-      duration: "18 months",
-    },
-    {
-      title: "Cosmetic Smile Makeover",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Complete smile transformation with veneers",
-      duration: "3 months",
-    },
-  ];
+
 
   const clinicImages = [
     "https://images.unsplash.com/photo-1762625570087-6d98fca29531?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZW50YWwlMjBjbGluaWMlMjBtb2Rlcm4lMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjkzNTk4MDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -208,17 +177,21 @@ export function HomePage({ onNavigate }: HomePageProps) {
   ];
 
   const seenClinicImageNames = new Set<string>();
+  const seenClinicImageUrls = new Set<string>();
   const clinicGalleryImages = Object.entries(homeClinicGalleryImageModules)
     .sort(([a], [b]) => a.localeCompare(b))
     .reduce<string[]>((acc, [path, src]) => {
       const fileName = path.split("/").pop() ?? path;
       const normalizedName = fileName
         .toLowerCase()
-        .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
-        .replace(/\s\(\d+\)(?=\.[a-z]+$)/, "");
+        .replace(/\s*[-_]?\s*copy(?:\s*\(\d+\))?/g, "")
+        .replace(/\s*\(\d+\)/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
 
-      if (!src || seenClinicImageNames.has(normalizedName)) return acc;
+      if (!src || seenClinicImageUrls.has(src) || seenClinicImageNames.has(normalizedName)) return acc;
       seenClinicImageNames.add(normalizedName);
+      seenClinicImageUrls.add(src);
       acc.push(src);
       return acc;
     }, []);
@@ -263,10 +236,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
         };
       })
     : testimonials;
-
-  const displayGallery = dynamicGallery.length > 0
-    ? dynamicGallery.filter(g => g.active !== false)
-    : null;
 
   return (
     <div className="min-h-screen">
@@ -448,9 +417,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </div>
           
-          <p className="text-center text-muted-foreground max-w-3xl mx-auto mb-12 text-lg">
-            {clinic.usp}
-          </p>
+          <div className="mb-12 flex justify-center">
+            <div className="max-w-4xl rounded-[2rem] border border-primary/10 bg-white/90 px-6 py-5 text-center shadow-premium animate-fade-in-scale">
+              <p className="text-lg md:text-xl font-extrabold tracking-wide text-primary leading-relaxed uppercase">
+                {clinic.usp}
+              </p>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {[
               { icon: Award, title: clinic.experience, description: "Trusted dental care and excellence" },
@@ -491,91 +464,54 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </div>
           </div>
 
-          {displayGallery && displayGallery.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-              {displayGallery.map((g, index) => {
-                const beforeSrc = g.beforeImage;
-                const afterSrc = g.afterImage ?? g.beforeImage;
-                return (
-                  <Card
-                    key={g.id ?? index}
-                    className="group overflow-hidden rounded-2xl shadow-lg border-0 bg-white/90 backdrop-blur-sm opacity-0 animate-fade-in-scale transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                    style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
-                  >
-                    <div className="grid grid-cols-2 gap-0">
-                      <div className="relative aspect-square overflow-hidden">
-                        <ImageWithFallback
-                          src={beforeSrc}
-                          alt={`${g.title ?? "Case"} - Before`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <span className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
-                          Before
-                        </span>
-                      </div>
-                      <div className="relative aspect-square overflow-hidden">
-                        <ImageWithFallback
-                          src={afterSrc}
-                          alt={`${g.title ?? "Case"} - After`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
-                          After
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-[#0E6BA8] mb-2">
-                        {g.title ?? "Treatment Result"}
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-4">
-                        {g.description ?? "Treatment results from our clinic."}
-                      </p>
-                      <div className="border-t border-border pt-4 flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Treatment Duration</span>
-                        <span className="text-sm font-semibold text-primary">
-                          {g.duration ?? "Varies"}
-                        </span>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          ) : beforeAfterCategories.length > 0 ? (
+          {beforeAfterCategories.length > 0 ? (
             <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
               {beforeAfterCategories.map((category, index) => {
                 const beforeSrc = category.images[0];
                 const afterSrc = category.images[1] ?? category.images[0];
+                const isAestheticSingleImage =
+                  category.id === "aesthethic" && beforeSrc === afterSrc;
                 return (
                   <Card
                     key={category.id}
                     className="group overflow-hidden rounded-2xl shadow-lg border-0 bg-white/90 backdrop-blur-sm opacity-0 animate-fade-in-scale transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                     style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
                   >
-                    {/* Two images side by side with badges */}
-                    <div className="grid grid-cols-2 gap-0">
-                      <div className="relative aspect-square overflow-hidden">
+                    {isAestheticSingleImage ? (
+                      <div className="relative aspect-[16/10] overflow-hidden">
                         <ImageWithFallback
                           src={beforeSrc}
-                          alt={`${category.title} - Before`}
+                          alt={`${category.title} - Treatment Result`}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <span className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
-                          Before
-                        </span>
                       </div>
-                      <div className="relative aspect-square overflow-hidden">
-                        <ImageWithFallback
-                          src={afterSrc}
-                          alt={`${category.title} - After`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
-                          After
-                        </span>
-                      </div>
-                    </div>
+                    ) : (
+                      <>
+                        {/* Two images side by side with badges */}
+                        <div className="grid grid-cols-2 gap-0">
+                          <div className="relative aspect-square overflow-hidden">
+                            <ImageWithFallback
+                              src={beforeSrc}
+                              alt={`${category.title} - Before`}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <span className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
+                              Before
+                            </span>
+                          </div>
+                          <div className="relative aspect-square overflow-hidden">
+                            <ImageWithFallback
+                              src={afterSrc}
+                              alt={`${category.title} - After`}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wide shadow-md">
+                              After
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-[#0E6BA8] mb-2">
                         {category.title}
@@ -719,68 +655,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* Before & After Gallery */}
-      <section className="py-24 bg-gradient-to-br from-[#E7F6FD] via-[#F0F9FF] to-[#E7F6FD]">
-        <div className="container mx-auto px-4 md:px-8 lg:px-16">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-white px-6 py-3 rounded-full mb-6 shadow-premium border border-primary/10">
-              <Sparkles className="w-5 h-5 text-secondary" />
-              <span className="text-sm text-primary font-medium uppercase tracking-wider">Transformations</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl mb-6 text-foreground font-semibold">
-              Before & After Results
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Real results from our patients. See the amazing transformations we've achieved
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {beforeAfterCases.map((case_, index) => (
-              <Card
-                key={index}
-                className="overflow-hidden border border-primary/10 shadow-premium rounded-3xl bg-white hover:shadow-premium-lg transition-all duration-300"
-              >
-                <div className="grid grid-cols-2 gap-0">
-                  {/* Before */}
-                  <div className="relative group overflow-hidden aspect-square">
-                    <img
-                      src={case_.before}
-                      alt="Before treatment"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4 bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
-                      BEFORE
-                    </div>
-                  </div>
-
-                  {/* After */}
-                  <div className="relative group overflow-hidden aspect-square">
-                    <img
-                      src={case_.after}
-                      alt="After treatment"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
-                      AFTER
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div className="p-8 bg-gradient-to-br from-white to-accent">
-                  <h3 className="text-2xl font-semibold text-foreground mb-3">{case_.title}</h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">{case_.description}</p>
-                  <div className="flex items-center justify-between pt-4 border-t border-border">
-                    <span className="text-sm text-muted-foreground">Treatment Duration</span>
-                    <span className="text-sm font-semibold text-primary">{case_.duration}</span>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Patient Testimonials */}
       <section className="py-24 md:py-32" style={{ backgroundColor: "#dee8ef" }}>

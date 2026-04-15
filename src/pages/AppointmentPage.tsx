@@ -339,8 +339,7 @@ export function AppointmentPage({ onNavigate }: AppointmentPageProps) {
                 </div>
                 <div className="space-y-2 text-sm">
                   {[
-                    { day: "Monday - Saturday", hours: clinic.timings },
-                    { day: "Sunday", hours: "Emergency Only" },
+                    { day: "Monday - Sunday", hours: clinic.timings },
                   ].map((schedule, index) => (
                     <div
                       key={index}

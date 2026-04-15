@@ -3,44 +3,13 @@ import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { TestimonialReviewCard } from "../components/TestimonialReviewCard";
 import { googleReviewTestimonials } from "../data/googleReviewTestimonials";
+import { beforeAfterCategories } from "../data/beforeAfterData";
 
 interface TestimonialsPageProps {
   onNavigate: (page: string) => void;
 }
 
 export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
-
-  const beforeAfterCases = [
-    {
-      title: "Dental Implants Transformation",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Complete smile restoration with dental implants",
-      duration: "6 months",
-    },
-    {
-      title: "Teeth Whitening Results",
-      before: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Professional whitening - 8 shades lighter",
-      duration: "1 session",
-    },
-    {
-      title: "Invisalign Treatment",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1639531167411-2fbab09f57f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Perfectly aligned smile with clear aligners",
-      duration: "18 months",
-    },
-    {
-      title: "Cosmetic Smile Makeover",
-      before: "https://images.unsplash.com/photo-1655807946138-811bb2340d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      after: "https://images.unsplash.com/photo-1660300110666-9ff243d1328a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-      description: "Complete smile transformation with veneers",
-      duration: "3 months",
-    },
-  ];
-
   const stats = [
     { icon: Users, value: "20,000+", label: "Happy Patients" },
     { icon: Star, value: "4.9/5", label: "Average Rating" },
@@ -157,48 +126,66 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {beforeAfterCases.map((case_, index) => (
+            {beforeAfterCategories.map((category, index) => {
+              const beforeSrc = category.images[0];
+              const afterSrc = category.images[1] ?? category.images[0];
+              const isAestheticSingleImage = category.id === "aesthethic" && beforeSrc === afterSrc;
+
+              return (
               <Card
-                key={index}
+                key={category.id}
                 className="overflow-hidden border border-primary/10 shadow-premium rounded-3xl bg-white hover:shadow-premium-lg transition-all duration-300"
               >
-                <div className="grid grid-cols-2 gap-0">
-                  {/* Before */}
-                  <div className="relative group overflow-hidden aspect-square">
+                {isAestheticSingleImage ? (
+                  <div className="relative aspect-[16/10] overflow-hidden">
                     <img
-                      src={case_.before}
-                      alt="Before treatment"
+                      src={beforeSrc}
+                      alt={`${category.title} treatment result`}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute top-4 left-4 bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
-                      BEFORE
-                    </div>
                   </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-0">
+                    {/* Before */}
+                    <div className="relative group overflow-hidden aspect-square">
+                      <img
+                        src={beforeSrc}
+                        alt={`${category.title} before treatment`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute top-4 left-4 bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
+                        BEFORE
+                      </div>
+                    </div>
 
-                  {/* After */}
-                  <div className="relative group overflow-hidden aspect-square">
-                    <img
-                      src={case_.after}
-                      alt="After treatment"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
-                      AFTER
+                    {/* After */}
+                    <div className="relative group overflow-hidden aspect-square">
+                      <img
+                        src={afterSrc}
+                        alt={`${category.title} after treatment`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm">
+                        AFTER
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Description */}
                 <div className="p-8 bg-gradient-to-br from-white to-accent">
-                  <h3 className="text-2xl font-semibold text-foreground mb-3">{case_.title}</h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">{case_.description}</p>
+                  <h3 className="text-2xl font-semibold text-foreground mb-3">{category.title}</h3>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    {category.description ?? "Treatment results from our clinic."}
+                  </p>
                   <div className="flex items-center justify-between pt-4 border-t border-border">
                     <span className="text-sm text-muted-foreground">Treatment Duration</span>
-                    <span className="text-sm font-semibold text-primary">{case_.duration}</span>
+                    <span className="text-sm font-semibold text-primary">{category.duration ?? "Varies"}</span>
                   </div>
                 </div>
               </Card>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

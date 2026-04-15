@@ -48,8 +48,8 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
   const certifications = [
     {
       icon: Award,
-      title: "ADA Accredited",
-      description: "American Dental Association certified practice",
+      title: "DCI Recognized",
+      description: "Dental Council of India recognized practice",
     },
     {
       icon: Shield,
@@ -125,17 +125,21 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
   ];
 
   const seenClinicImageNames = new Set<string>();
+  const seenClinicImageUrls = new Set<string>();
   const clinicImages = Object.entries(clinicAmbienceImageModules)
     .sort(([a], [b]) => a.localeCompare(b))
     .reduce<string[]>((acc, [path, src]) => {
       const fileName = path.split("/").pop() ?? path;
       const normalizedName = fileName
-        .toLowerCase()
-        .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
-        .replace(/\s\(\d+\)(?=\.[a-z]+$)/, "");
+              .toLowerCase()
+              .replace(/\s*[-_]?\s*copy(?:\s*\(\d+\))?/g, "")
+        .replace(/\s*\(\d+\)/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
 
-      if (!src || seenClinicImageNames.has(normalizedName)) return acc;
+      if (!src || seenClinicImageUrls.has(src) || seenClinicImageNames.has(normalizedName)) return acc;
       seenClinicImageNames.add(normalizedName);
+      seenClinicImageUrls.add(src);
       acc.push(src);
       return acc;
     }, []);
@@ -217,16 +221,13 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 ) : (
                   <>
                     <p>
-                      THE FAMILY DENTIST began with a simple vision: to create a dental practice where families feel truly cared for. Our senior practitioners, including Prof. Dr. Balram Garg (Oral &amp; Maxillofacial Surgeon &amp; Implantologist) and Dr. Radhika Garg (Conservative Dentist &amp; Endodontist), lead the clinic with a commitment to combining clinical excellence with genuine compassion.
+                      THE FAMILY DENTIST is a super-speciality dental implant and maxillofacial clinic in Noida Extension, built to deliver advanced treatment with a family-friendly approach and clear communication.
                     </p>
                     <p>
-                      Over the years, we have grown into a fully digital dental clinic, supported by an experienced team of specialists and dedicated staff. Prof. Dr. Balram brings over 18 years of experience, including roles at AIIMS, PGIMS, and Government Dental College, and an MS in Dentistry, along with a research fellowship in implantology from the University of Michigan, USA. Dr. Radhika has over 17 years of experience in aesthetic and modern dentistry, with expertise in single-sitting RCT and smile design.
+                      Our senior practitioners, Prof. Dr. Balram Garg and Dr. Radhika Garg, bring deep clinical experience, multiple fellowship credentials from the USA, and a strong focus on ethical, patient-first care.
                     </p>
                     <p>
-                      Despite our growth, we have never lost sight of what matters most-building lasting relationships with our patients. Today, we're proudly one of the most equipped dental and maxillofacial centers in Noida and have served over 20,000 patients and counting. Our state-of-the-art facility combines the latest dental technology with a warm, family-friendly atmosphere. Whether you're bringing in your toddler for their first visit or seeking advanced cosmetic dentistry, we're here to provide exceptional care at every stage of life.
-                    </p>
-                    <p>
-                      Please read what our patients have to say about their experience with us. Their reviews, shared in their own words, reflect the care, comfort, and trust they felt during their treatment at our clinic.
+                      From emergency trauma care and minor surgery to implant rehabilitation, smile design, and restorative dentistry, we focus on dependable results that feel natural and last.
                     </p>
                   </>
                 )}

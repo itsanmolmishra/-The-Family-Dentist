@@ -25,7 +25,10 @@ export function DoctorDetailPage({ doctorId, onNavigate }: DoctorDetailPageProps
     );
   }
 
-  const quals = [doctor.qualification, doctor.qualificationLine2].filter(Boolean) as string[];
+  const quals = [doctor.qualification].filter(Boolean) as string[];
+  const qualPoints = doctor.qualificationLine2
+    ? doctor.qualificationLine2.split("·").map((part) => part.trim()).filter(Boolean)
+    : [];
 
   return (
     <div className="min-h-screen pt-20">
@@ -66,6 +69,15 @@ export function DoctorDetailPage({ doctorId, onNavigate }: DoctorDetailPageProps
                     {q}
                   </p>
                 ))}
+                {qualPoints.length > 0 && (
+                  <ul className="list-disc pl-6 space-y-2 pt-1">
+                    {qualPoints.map((point, i) => (
+                      <li key={i} className="leading-relaxed">
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <p className="text-sm font-medium text-foreground mb-1">

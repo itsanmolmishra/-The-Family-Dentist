@@ -45,6 +45,8 @@ function getImagesByFolder(): BeforeAfterCategory[] {
   for (const path in imageModules) {
     const url = imageModules[path] as string;
     if (!url) continue;
+    // Only include original clinic case photos.
+    if (!/whatsapp image/i.test(path)) continue;
     // path can be nested like ../assets/minor surgery/lip growth/....jpeg
     const rawFolder = getPrimaryFolder(path);
     if (!treatmentFolders.has(rawFolder)) continue;
@@ -57,13 +59,13 @@ function getImagesByFolder(): BeforeAfterCategory[] {
     aesthethic: { title: "Aesthetic", description: "Smile design and aesthetic improvements", duration: "2–4 weeks" },
     bleaching: { title: "Bleaching", description: "Professional teeth whitening results", duration: "1 session" },
     scaling: { title: "Scaling", description: "Deep cleaning and gum care", duration: "1–2 sessions" },
-    "minor surgery": { title: "Minor Surgery", description: "Minor oral surgery outcomes", duration: "1–2 weeks" },
-    "single implant": { title: "Single Implant", description: "Single tooth implant restoration", duration: "3–6 months" },
-    "two implant": { title: "Two Implant", description: "Dual implant transformation", duration: "4–6 months" },
+    "minor surgery": { title: "Minor Surgery", description: "Immediate oral surgery outcomes", duration: "Immediate" },
+    "single implant": { title: "Single Implant", description: "Single tooth implant restoration", duration: "2–3 months" },
+    "two implant": { title: "Two Implant", description: "Dual implant restoration", duration: "2–3 months" },
     "surgical endodontics": { title: "Surgical Endodontics", description: "Advanced root canal surgery", duration: "1–2 sessions" },
-    "full mouth case": { title: "Full Mouth Case", description: "Full mouth rehabilitation", duration: "6–12 months" },
-    "full mouth crown": { title: "Full Mouth Crown", description: "Full mouth crown restoration", duration: "4–8 weeks" },
-    "kids trauma": { title: "Kids Trauma", description: "Pediatric dental trauma care", duration: "1–4 weeks" },
+    "full mouth case": { title: "Full Mouth Case", description: "Full mouth rehabilitation", duration: "1–2 weeks" },
+    "full mouth crown": { title: "Full Mouth Crown", description: "Full mouth crown restoration", duration: "1–2 weeks" },
+    "kids trauma": { title: "Kids Trauma", description: "Emergency dental trauma care", duration: "Immediate" },
   };
 
   return Object.entries(byFolder)
