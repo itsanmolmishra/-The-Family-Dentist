@@ -129,11 +129,13 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
   const clinicImages = Object.entries(clinicAmbienceImageModules)
     .sort(([a], [b]) => a.localeCompare(b))
     .reduce<string[]>((acc, [path, src]) => {
-      const fileName = path.split("/").pop() ?? path;
+      // Vite glob keys may contain "/" on POSIX and "\" on Windows.
+      const fileName = path.split(/[/\\]/).pop() ?? path;
       const normalizedName = fileName
               .toLowerCase()
               .replace(/\s*[-_]?\s*copy(?:\s*\(\d+\))?/g, "")
         .replace(/\s*\(\d+\)/g, "")
+        .replace(/\.[a-z0-9]+$/i, "")
         .replace(/\s+/g, " ")
         .trim();
 
@@ -143,6 +145,25 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       acc.push(src);
       return acc;
     }, []);
+
+  // Our Story should avoid portrait/staff/patient photos. Curate a clinic-only set.
+  const OUR_STORY_IMAGE_ALLOWLIST = [
+    "WhatsApp Image 2026-03-23 at 7.37.00 PM.jpeg", // chair + stairs
+    "WhatsApp Image 2026-03-23 at 7.36.51 PM.jpeg", // equipment wide
+    "WhatsApp Image 2026-03-23 at 7.36.59 PM.jpeg", // reception
+    "WhatsApp Image 2026-03-23 at 7.36.54 PM.jpeg", // exterior signage
+  ].map((n) => n.toLowerCase());
+
+  const clinicGalleryByFileName = new Map<string, string>(
+    Object.entries(clinicAmbienceImageModules).map(([p, src]) => [
+      (p.split(/[/\\]/).pop() ?? p).toLowerCase(),
+      src,
+    ])
+  );
+
+  const ourStoryImages = OUR_STORY_IMAGE_ALLOWLIST
+    .map((name) => clinicGalleryByFileName.get(name))
+    .filter((src): src is string => Boolean(src));
 
   const seenClinicVideoNames = new Set<string>();
   const clinicVideos = Object.entries(clinicAmbienceVideoModules)
@@ -234,9 +255,9 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {clinicImages.slice(0, 4).map((image, index) => (
+              {(ourStoryImages.length > 0 ? ourStoryImages : clinicImages.slice(0, 4)).map((image, index) => (
                 <div
-                  key={index}
+                  key={image}
                   className="rounded-3xl overflow-hidden shadow-premium hover:shadow-premium-lg transition-all duration-300"
                 >
                   <img

@@ -181,11 +181,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const clinicGalleryImages = Object.entries(homeClinicGalleryImageModules)
     .sort(([a], [b]) => a.localeCompare(b))
     .reduce<string[]>((acc, [path, src]) => {
-      const fileName = path.split("/").pop() ?? path;
+      // Vite glob keys may contain "/" on POSIX and "\" on Windows.
+      const fileName = path.split(/[/\\]/).pop() ?? path;
       const normalizedName = fileName
         .toLowerCase()
         .replace(/\s*[-_]?\s*copy(?:\s*\(\d+\))?/g, "")
         .replace(/\s*\(\d+\)/g, "")
+        .replace(/\.[a-z0-9]+$/i, "")
         .replace(/\s+/g, " ")
         .trim();
 
@@ -195,6 +197,30 @@ export function HomePage({ onNavigate }: HomePageProps) {
       acc.push(src);
       return acc;
     }, []);
+
+  // Home "Our Clinic" is a curated set of 6 images (ordered).
+  // This avoids duplicates and "too similar" shots showing twice.
+  const CLINIC_HOME_IMAGE_ALLOWLIST = [
+    // Clinic ambience
+    "WhatsApp Image 2026-03-23 at 7.37.00 PM.jpeg", // chair + stairs
+    "WhatsApp Image 2026-03-23 at 7.36.51 PM.jpeg", // clinic equipment wide (given)
+    "WhatsApp Image 2026-03-23 at 7.36.53 PM.jpeg", // clinic equipment vertical (real)
+    "WhatsApp Image 2026-03-23 at 7.36.59 PM.jpeg", // reception
+    "WhatsApp Image 2026-03-23 at 7.36.54 PM.jpeg", // exterior signage
+    "WhatsApp Image 2026-03-23 at 7.37.01 PM (2).jpeg", // logo sign close-up (no people)
+  ].map((n) => n.toLowerCase());
+
+  const clinicGalleryByFileName = new Map<string, string>(
+    Object.entries(homeClinicGalleryImageModules).map(([p, src]) => [
+      (p.split(/[/\\]/).pop() ?? p).toLowerCase(),
+      src,
+    ])
+  );
+
+  const clinicHomeImages = CLINIC_HOME_IMAGE_ALLOWLIST
+    .map((name) => clinicGalleryByFileName.get(name))
+    .filter((src): src is string => Boolean(src))
+    .slice(0, 6);
 
   const displayServices = dynamicServices.length > 0
     ? dynamicServices.filter(s => s.active !== false).map(s => ({
@@ -693,9 +719,11 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {(clinicGalleryImages.length > 0 ? clinicGalleryImages : clinicImages).map((image, index) => (
+            {(clinicHomeImages.length > 0 ? clinicHomeImages : (clinicGalleryImages.length > 0 ? clinicGalleryImages : clinicImages))
+              .slice(0, 6)
+              .map((image, index) => (
               <div 
-                key={index} 
+                key={image} 
                 className="group rounded-3xl overflow-hidden shadow-premium hover:shadow-premium-lg transition-all duration-500"
               >
                 <img
