@@ -35,6 +35,8 @@ import { getDoctorsForHome, resolveDoctorPageId } from "../data/doctorsData";
 import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
 import fullMouthCaseVideo from "../assets/full mouth case/WhatsApp Video 2026-02-04 at 11.48.26 AM.mp4";
+import clinicTourVideoA from "../assets/WhatsApp Video 2026-04-18 at 5.57.27 PM.mp4";
+import clinicTourVideoB from "../assets/WhatsApp Video 2026-04-18 at 5.57.28 PM.mp4";
 
 interface HomePageProps {
   onNavigate: (page: string, options?: NavigateOptions) => void;
@@ -733,6 +735,43 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 />
               </div>
             ))}
+          </div>
+
+          <div className="mt-14 max-w-5xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">Clinic Video Tour</h3>
+              <p className="text-muted-foreground text-lg">A quick look at our real clinic environment</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              {[clinicTourVideoA, clinicTourVideoB].map((src, index) => {
+                const poster =
+                  (clinicHomeImages.length > index ? clinicHomeImages[index] : undefined) ??
+                  (clinicGalleryImages.length > index ? clinicGalleryImages[index] : undefined);
+                return (
+                  <Card
+                    key={src}
+                    className="overflow-hidden rounded-3xl border border-primary/10 shadow-premium hover:shadow-premium-lg transition-all duration-300 bg-white"
+                  >
+                    <video
+                      src={src}
+                      autoPlay
+                      muted
+                      loop
+                      controls
+                      preload="metadata"
+                      playsInline
+                      poster={poster}
+                      className="w-full aspect-video object-cover bg-black"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                    <div className="px-5 py-4 border-t border-primary/10 bg-gradient-to-r from-[#f8fcff] to-white">
+                      <p className="text-sm font-medium text-primary">Clinic tour {index + 1}</p>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

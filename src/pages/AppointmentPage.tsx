@@ -79,7 +79,7 @@ export function AppointmentPage({ onNavigate }: AppointmentPageProps) {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#f5f3f1]">
+      <div className="min-h-screen pt-24 sm:pt-28 flex items-center justify-center bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#f5f3f1]">
         <Card className="max-w-2xl mx-4 p-12 text-center border border-primary/10 shadow-premium-lg rounded-3xl bg-white">
           <div className="w-24 h-24 gradient-rose-gold rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
             <CheckCircle2 className="w-12 h-12 text-white" />
@@ -126,7 +126,7 @@ export function AppointmentPage({ onNavigate }: AppointmentPageProps) {
   }
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-24 sm:pt-28">
       {/* Hero Section */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#f5f3f1] relative overflow-hidden">
         <div className="absolute inset-0">

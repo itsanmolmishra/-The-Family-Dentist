@@ -31,7 +31,7 @@ export function DoctorDetailPage({ doctorId, onNavigate }: DoctorDetailPageProps
     : [];
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-24 sm:pt-28">
       <section className="py-12 md:py-16 bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#E7F6FD] border-b border-primary/10">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
           <button

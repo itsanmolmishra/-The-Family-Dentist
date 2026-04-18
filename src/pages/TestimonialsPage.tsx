@@ -18,7 +18,7 @@ export function TestimonialsPage({ onNavigate }: TestimonialsPageProps) {
   ];
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-24 sm:pt-28">
       {/* Hero Section */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-[#E7F6FD] via-[#F0F9FF] to-[#E7F6FD] relative overflow-hidden">
         <div className="absolute inset-0">

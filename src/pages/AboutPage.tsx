@@ -22,6 +22,8 @@ import { beforeAfterCategories } from "../data/beforeAfterData";
 import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
 import { fetchDoctors, fetchSettings } from "../api";
+import clinicTourVideoA from "../assets/WhatsApp Video 2026-04-18 at 5.57.27 PM.mp4";
+import clinicTourVideoB from "../assets/WhatsApp Video 2026-04-18 at 5.57.28 PM.mp4";
 
 interface AboutPageProps {
   onNavigate: (page: string, options?: NavigateOptions) => void;
@@ -166,10 +168,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
     .filter((src): src is string => Boolean(src));
 
   const seenClinicVideoNames = new Set<string>();
-  const clinicVideos = Object.entries(clinicAmbienceVideoModules)
+  const clinicVideosFromGallery = Object.entries(clinicAmbienceVideoModules)
     .sort(([a], [b]) => a.localeCompare(b))
     .reduce<string[]>((acc, [path, src]) => {
-      const fileName = path.split("/").pop() ?? path;
+      const fileName = path.split(/[/\\]/).pop() ?? path;
       const normalizedName = fileName
         .toLowerCase()
         .replace(/\s-\scopy(?:\s\(\d+\))?(?=\.[a-z]+$)/, "")
@@ -180,6 +182,8 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       acc.push(src);
       return acc;
     }, []);
+
+  const clinicVideos = [clinicTourVideoA, clinicTourVideoB, ...clinicVideosFromGallery];
 
   const teamMembers = dynamicDoctors.length > 0
     ? dynamicDoctors.filter(d => d.active !== false).map(d => ({
@@ -204,7 +208,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       }));
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-24 sm:pt-28">
       {/* Hero Section */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#f5f3f1] relative overflow-hidden">
         <div className="absolute inset-0">

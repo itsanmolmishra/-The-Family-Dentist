@@ -17,6 +17,7 @@ import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { allBeforeAfterImages, beforeAfterCategories } from "../data/beforeAfterData";
+import { CLINICAL_RADIOGRAPHS } from "../data/clinicalRadiographs";
 import { doctors, resolveDoctorPageId } from "../data/doctorsData";
 import type { NavigateOptions } from "../types/navigation";
 import { clinic } from "../data/clinicConfig";
@@ -311,11 +312,15 @@ export function GalleryPage({ onNavigate, highlightSectionId }: GalleryPageProps
   const getTreatmentImages = (sectionId: string): string[] => {
     const imagesBySection: Record<string, string[]> = {
       "dental-implants": [
+        CLINICAL_RADIOGRAPHS.fullMouthImplantPanoramic,
         ...(categoryImageMap["single implant"] ?? []),
         ...(categoryImageMap["two implant"] ?? []),
         ...(categoryImageMap["full mouth case"] ?? []),
       ],
-      "root-canal-treatment": [...(categoryImageMap["surgical endodontics"] ?? [])],
+      "root-canal-treatment": [
+        CLINICAL_RADIOGRAPHS.rootCanalPeriapical,
+        ...(categoryImageMap["surgical endodontics"] ?? []),
+      ],
       "cosmetic-dentistry": [
         ...(categoryImageMap["aesthethic"] ?? []),
         ...(categoryImageMap["bleaching"] ?? []),
@@ -340,7 +345,7 @@ export function GalleryPage({ onNavigate, highlightSectionId }: GalleryPageProps
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-[#f7fbff] via-white to-[#eef7ff]">
+    <div className="min-h-screen pt-24 sm:pt-28 bg-gradient-to-br from-[#f7fbff] via-white to-[#eef7ff]">
       {/* Hero */}
       <section className="py-24 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0">
@@ -723,13 +728,13 @@ export function GalleryPage({ onNavigate, highlightSectionId }: GalleryPageProps
                 aria-label={`Open ${doctor.name} full profile page`}
                 className="group h-full flex flex-col gap-0 overflow-hidden rounded-3xl border border-primary/10 bg-white p-0 hover:shadow-premium transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-left hover:border-primary/25"
               >
-                <div className="aspect-[4/3] w-full shrink-0 overflow-hidden relative">
+                <div className="relative w-full h-[17.5rem] sm:h-[18.75rem] lg:h-[20rem] shrink-0 overflow-hidden">
                   <ImageWithFallback
                     src={doctor.image}
                     alt=""
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-12 pb-2.5 px-3 pointer-events-none flex items-end justify-between gap-2">
+                  <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-12 pb-2.5 px-3 pointer-events-none flex items-end justify-between gap-2">
                     <span className="text-white text-xs font-semibold drop-shadow-md">Opens full profile</span>
                     <ChevronRight className="w-4 h-4 text-white shrink-0 opacity-95" aria-hidden />
                   </div>

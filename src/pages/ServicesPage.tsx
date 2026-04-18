@@ -18,15 +18,35 @@ import {
   Star,
   ListChecks,
   AlertCircle,
+  Microscope,
 } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useState, useEffect } from "react";
 import { fetchServices } from "../api";
+import { CLINICAL_RADIOGRAPHS } from "../data/clinicalRadiographs";
 
 interface ServicesPageProps {
   onNavigate: (page: string, options?: { gallerySection?: string }) => void;
 }
+
+const SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE: Record<
+  string,
+  { src: string; heading: string; caption: string }
+> = {
+  "Dental Implants": {
+    src: CLINICAL_RADIOGRAPHS.fullMouthImplantPanoramic,
+    heading: "Full-mouth implant planning (panoramic X-ray)",
+    caption:
+      "Panoramic imaging helps us evaluate bone volume, sinus proximity, and nerve paths before full-arch or multiple implant rehabilitation. Shown: illustrative case with implant fixtures and fixed prosthetic support.",
+  },
+  "Root Canal Treatment": {
+    src: CLINICAL_RADIOGRAPHS.rootCanalPeriapical,
+    heading: "Root canal treatment on X-ray",
+    caption:
+      "Periapical radiographs confirm thorough cleaning and filling of the root canal system. This supports long-term comfort and helps preserve your natural tooth whenever possible.",
+  },
+};
 
 /** Matches `treatmentSections` ids in GalleryPage — opens that treatment's photos */
 const GALLERY_SECTION_BY_TITLE: Record<string, string> = {
@@ -365,7 +385,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
       }));
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-24 sm:pt-28">
       {/* Hero Section */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-[#fff9f5] via-[#faf8f7] to-[#f5f3f1] relative overflow-hidden">
         <div className="absolute inset-0">
@@ -435,6 +455,32 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
                       {service.fullDesc}
                     </p>
                   </div>
+
+                  {SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE[service.title] && (
+                    <div className="rounded-2xl overflow-hidden border border-primary/15 bg-gradient-to-br from-[#f0f7fc] to-white shadow-sm">
+                      <div className="px-5 py-4 border-b border-primary/10 bg-white/80">
+                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                          <Microscope className="w-5 h-5 text-primary shrink-0" />
+                          {SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE[service.title].heading}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                          {SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE[service.title].caption}
+                        </p>
+                      </div>
+                      <div className="bg-neutral-950/95 flex justify-center items-center p-2 md:p-4">
+                        <img
+                          src={SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE[service.title].src}
+                          alt={SERVICE_CLINICAL_RADIOGRAPH_BY_TITLE[service.title].heading}
+                          className="max-h-[min(420px,55vh)] w-full object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground px-4 py-2 bg-white/90 border-t border-primary/10">
+                        Educational / illustrative imaging — individual anatomy and treatment plans vary; your dentist will explain your own images in clinic.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Treatment Options */}
                   {service.treatmentOptions && service.treatmentOptions.length > 0 && (

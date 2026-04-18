@@ -1,7 +1,7 @@
 import { Phone, Mail, Clock, Menu, X, Facebook, Instagram, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
-import logoImg from "../assets/logo-dentist.jpeg";
+import logoImg from "../assets/Gemini_Generated_Image_bm3izcbm3izcbm3i.svg";
 import { fetchSettings } from "../api";
 import { clinic } from "../data/clinicConfig";
 
@@ -64,20 +64,24 @@ export function Header({ currentPage, onNavigate }: HeaderProps) {
       </div>
 
       {/* Main Header - patla (slim) */}
-      <div className="bg-white/95 backdrop-blur-md shadow-md">
+      {/* Solid white matches most logo mattes; avoids mismatch with translucent/blurred bar */}
+      <div className="bg-white shadow-md">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
-          <div className="flex items-center justify-between gap-4 h-20 sm:h-24">
-            {/* Logo - bada size, header ke andar fit */}
+          <div className="flex min-h-0 items-center justify-between gap-4 h-24 sm:h-28">
+            {/* Logo: fills nav row height; wide box so Gemini art + text read like reference */}
             <button
+              type="button"
               onClick={() => onNavigate("home")}
-              className="flex items-center shrink-0 group hover:opacity-90 transition-opacity"
+              className="flex h-full min-h-0 max-h-full items-center justify-center shrink-0 bg-transparent border-0 p-0 m-0 shadow-none ring-0 cursor-pointer group hover:opacity-90 transition-opacity"
             >
-              <img
-                src={logoImg}
-                alt="thefamilydentist - Dental Clinic"
-                className="w-auto object-contain object-left"
-                style={{ height: "82px" }}
-              />
+              <span className="flex h-full min-h-0 w-[min(340px,82vw)] items-center justify-start sm:w-[min(440px,86vw)]">
+                <img
+                  src={logoImg}
+                  alt="Dr. Garg's Implant & Maxillofacial"
+                  className="block h-full w-full object-contain object-left bg-transparent"
+                  decoding="async"
+                />
+              </span>
             </button>
 
             {/* Desktop Navigation */}
