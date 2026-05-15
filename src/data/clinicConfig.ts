@@ -28,4 +28,38 @@ export const clinic = {
     "Multiple fellowship degrees from the USA",
     "Trusted, patient-focused care with clear communication",
   ],
+
+  seo: {
+    brandName: "The Family Dentist",
+    locationLabel: "Noida Extension & Greater Noida West",
+    addressLocality: "Greater Noida West",
+    addressRegion: "Uttar Pradesh",
+    postalCode: "201309",
+    latitude: 28.609,
+    longitude: 77.42,
+    /** Add Facebook, Instagram, Google Business profile URLs when available */
+    sameAs: [] as string[],
+    doctorIds: ["balram-garg", "radhika-garg", "karishma-gautam"],
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "09:30",
+        closes: "14:30",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "16:00",
+        closes: "21:30",
+      },
+    ],
+    areaServed: [
+      "Greater Noida West",
+      "Noida Extension",
+      "Gaur City",
+      "Crossings Republik",
+      "Noida",
+    ],
+  },
 };

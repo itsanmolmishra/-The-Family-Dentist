@@ -1,0 +1,18 @@
+{
+  "name": "The Family Dentist",
+  "short_name": "Family Dentist",
+  "description": "Super-speciality dental implant & maxillofacial clinic in Noida Extension, Greater Noida West",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0E6BA8",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/og-image.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

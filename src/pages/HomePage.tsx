@@ -634,9 +634,21 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <div className="aspect-[3/4] w-full shrink-0 overflow-hidden relative">
                   <img
                     src={doctor.image}
-                    alt=""
+                    alt={`${doctor.name} — ${doctor.specialty} at ${clinic.seo.brandName}, Noida Extension`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
+                  {doctor.id ? (
+                    <a
+                      href={`/doctor/${doctor.id}`}
+                      className="sr-only"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onNavigate("doctor", { doctorId: doctor.id });
+                      }}
+                    >
+                      View {doctor.name} profile
+                    </a>
+                  ) : null}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   {doctor.id && (
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-16 pb-3 px-4 pointer-events-none flex items-end justify-between gap-2">

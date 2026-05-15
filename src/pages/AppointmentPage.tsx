@@ -84,9 +84,9 @@ export function AppointmentPage({ onNavigate }: AppointmentPageProps) {
           <div className="w-24 h-24 gradient-rose-gold rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
             <CheckCircle2 className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl mb-6 text-foreground">
+          <h2 className="text-4xl md:text-5xl mb-6 text-foreground">
             Appointment Request Received!
-          </h1>
+          </h2>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
             Thank you, <span className="text-primary font-medium">{formData.name}</span>! We've received your appointment request for{" "}
             <span className="text-primary font-medium">{formData.service}</span> on{" "}
@@ -407,7 +407,7 @@ export function AppointmentPage({ onNavigate }: AppointmentPageProps) {
                 {
                   icon: Shield,
                   title: "Insurance Accepted",
-                  description: "We work with most major dental insurance providers including Delta Dental, Cigna, Aetna, MetLife, and more",
+                  description: "We accept major Indian health insurance and corporate dental plans. Ask our team about coverage for implants, RCT, and surgical procedures.",
                 },
                 {
                   icon: CreditCard,

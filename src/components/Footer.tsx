@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram, MessageCircle, Twitter, Linkedin, Heart } from "lucide-react";
 import { fetchSettings, fetchServices } from "../api";
 import { clinic } from "../data/clinicConfig";
+import { SeoLink } from "./SeoLink";
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -38,7 +39,7 @@ export function Footer({ onNavigate }: FooterProps) {
   const displayServices = dynamicServices.length > 0 ? dynamicServices : services;
 
   return (
-    <footer className="bg-gradient-to-br from-[#3d3d3d] via-[#2d2d2d] to-[#1d1d1d] text-white relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-[#3d3d3d] via-[#2d2d2d] to-[#1d1d1d] text-white relative overflow-hidden" role="contentinfo">
       {/* Decorative Background */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
@@ -72,19 +73,52 @@ export function Footer({ onNavigate }: FooterProps) {
               {settings?.footerText || `${clinic.usp} ${clinic.slogan}.`}
             </p>
             <div className="flex items-center space-x-3">
-              <a href={settings?.socialLinks?.facebook || "#"} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110">
+              <a
+                href={settings?.socialLinks?.facebook || clinic.googleMapDirectionsUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label="Facebook"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href={settings?.socialLinks?.instagram || "#"} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110">
+              <a
+                href={settings?.socialLinks?.instagram || clinic.googleMapDirectionsUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label="Instagram"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110"
+              >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href={settings?.socialLinks?.twitter || "#"} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110">
+              <a
+                href={settings?.socialLinks?.twitter || clinic.googleMapDirectionsUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label="Twitter"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href={settings?.socialLinks?.linkedin || "#"} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110">
+              <a
+                href={settings?.socialLinks?.linkedin || clinic.googleMapDirectionsUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label="LinkedIn"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110"
+              >
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href={settings?.socialLinks?.whatsapp || "#"} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110">
+              <a
+                href={
+                  settings?.socialLinks?.whatsapp ||
+                  `https://wa.me/917683054281`
+                }
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label="WhatsApp"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110"
+              >
                 <MessageCircle className="w-5 h-5" />
               </a>
             </div>
@@ -96,13 +130,14 @@ export function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.id}>
-                  <button
-                    onClick={() => onNavigate(link.id)}
-                    className="text-white/70 hover:text-primary transition-colors duration-300 flex items-center group"
+                  <SeoLink
+                    page={link.id}
+                    onNavigate={onNavigate}
+                    className="text-white/70 hover:text-primary transition-colors duration-300 flex items-center group no-underline"
                   >
                     <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     {link.label}
-                  </button>
+                  </SeoLink>
                 </li>
               ))}
             </ul>
@@ -114,13 +149,14 @@ export function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-3">
               {displayServices.map((service, index) => (
                 <li key={index}>
-                  <button
-                    onClick={() => onNavigate("services")}
-                    className="text-white/70 hover:text-primary transition-colors duration-300 flex items-center group"
+                  <SeoLink
+                    page="services"
+                    onNavigate={onNavigate}
+                    className="text-white/70 hover:text-primary transition-colors duration-300 flex items-center group no-underline"
                   >
                     <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     {service}
-                  </button>
+                  </SeoLink>
                 </li>
               ))}
             </ul>

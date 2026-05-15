@@ -336,16 +336,16 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                 </div>
 
                 <div>
-                  <h3 className="text-2xl mb-4 text-foreground font-semibold">Parking Information</h3>
+                  <h3 className="text-2xl mb-4 text-foreground font-semibold">Parking</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Free parking available in the Medical Plaza parking garage. Entrance on Main Street. Validate your parking ticket at our reception desk for complimentary parking.
+                    Ample parking available at City Galleria Market, Gaur City 2. Easy access from Gaur City main road and Greater Noida West.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="text-2xl mb-4 text-foreground font-semibold">Public Transportation</h3>
+                  <h3 className="text-2xl mb-4 text-foreground font-semibold">How to Reach</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Accessible via Metro Line 5 (Medical Center Station) - 2 minute walk. Bus routes 12, 45, and 67 stop directly in front of the building.
+                    Located in Gaur City 2, Greater Noida West — well connected from Noida Extension, Crossings Republik, and nearby sectors. Use Google Maps for turn-by-turn directions.
                   </p>
                 </div>
 
